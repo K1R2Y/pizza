@@ -22,6 +22,7 @@ function PizzaBlock({ title, price, sizes, imageUrl, types }) {
         <ul>
           {types.map((i) => (
             <li
+              key={i}
               onClick={() => setActiveDoughTypeIndex(i)}
               className={getClassName(i)}
             >
@@ -32,6 +33,7 @@ function PizzaBlock({ title, price, sizes, imageUrl, types }) {
         <ul>
           {sizes.map((size, i) => (
             <li
+              key={size}
               onClick={() => setActiveCategoryIndex(i)}
               className={activeCategoryIndex === i ? "active" : ""}
             >

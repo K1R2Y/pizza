@@ -1,7 +1,18 @@
+import { useState } from "react";
+
 function Sort() {
+  const [isVisible, setVisibility] = useState(false);
+  const sortBy = ["популярності", "ціні", "алфавіту"];
+  const [isSelected, setActiveType] = useState(0);
+
+  const selectSortType = (i) => {
+    setActiveType(i);
+    setVisibility(false);
+  };
+
   return (
     <div className="sort">
-      <div className="sort__label">
+      <div className="sort__label" onClick={() => setVisibility(!isVisible)}>
         <svg
           width="10"
           height="6"
@@ -14,16 +25,24 @@ function Sort() {
             fill="#2C2C2C"
           />
         </svg>
-        <b>Сортировка по:</b>
-        <span>популярности</span>
+        <b>Сортування по:</b>
+        <span>{sortBy[isSelected]}</span>
       </div>
-      <div className="sort__popup">
-        <ul>
-          <li className="active">популярности</li>
-          <li>цене</li>
-          <li>алфавиту</li>
-        </ul>
-      </div>
+      {isVisible && (
+        <div className="sort__popup">
+          <ul>
+            {sortBy.map((sortType, i) => (
+              <li
+                key={i}
+                onClick={() => selectSortType(i)}
+                className={isSelected === i ? "active" : ""}
+              >
+                {sortType}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
