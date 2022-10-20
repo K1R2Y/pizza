@@ -13,10 +13,12 @@ function Home() {
       .then((response) => response.json())
       .then((res) => setItems(res))
       .then(() => setIsLoading(false));
+
+    window.scrollTo(0, 0);
   }, []);
 
   return (
-    <>
+    <div className="container">
       <div className="content__top">
         <Categories />
         <Sort />
@@ -27,7 +29,7 @@ function Home() {
           ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
           : items.map((pizza) => <PizzaBlock {...pizza} key={pizza.id} />)}
       </div>
-    </>
+    </div>
   );
 }
 
