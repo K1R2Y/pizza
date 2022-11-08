@@ -1,17 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import Categories from "../components/Categories";
-import Sort from "../components/Sort";
+import Sort, { sortBy } from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock/index";
 import Skeleton from "../components/PizzaBlock/skeleton";
 import Pagination from "../components/Pagination";
 import axios from "axios";
-import { useContext } from "react";
+import qs from "qs";
+import { useNavigate } from "react-router-dom";
 import { searchContext } from "../App";
 import { useSelector, useDispatch } from "react-redux";
-import { setCategoryId, setCurrentPage } from "../redux/slices/filterSlice";
+import {
+  setCategoryId,
+  setCurrentPage,
+  setFilters,
+} from "../redux/slices/filterSlice";
 
 function Home() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isSearch = useRef(false);
+  const isMounted = useRef(false);
   const { categoryId, sort, currentPage } = useSelector(
     (state) => state.filter
   );
@@ -24,7 +32,7 @@ function Home() {
     dispatch(setCategoryId(id));
   };
 
-  useEffect(() => {
+  const getPizzas = () => {
     setIsLoading(true);
 
     axios
@@ -37,9 +45,41 @@ function Home() {
         setItems(response.data);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    if (!isSearch.current) {
+      getPizzas();
+    }
+
+    isSearch.current = false;
 
     window.scrollTo(0, 0);
   }, [categoryId, sortType, searchValue, currentPage]);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const query = qs.stringify({
+        sortProperty: sort.sortName,
+        categoryId,
+        currentPage,
+      });
+
+      navigate(`?${query}`);
+    }
+
+    isMounted.current = true;
+  }, [categoryId, sortType, currentPage]);
+
+  useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+      const sort = sortBy.find((obj) => obj.sortName === params.sortProperty);
+      dispatch(setFilters({ ...params, sort }));
+
+      isSearch.current = true;
+    }
+  }, []);
 
   return (
     <div className="container">
