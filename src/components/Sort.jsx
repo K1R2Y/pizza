@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setSort } from "../redux/slices/filterSlice";
 
@@ -11,6 +11,7 @@ export const sortBy = [
 function Sort() {
   const dispatch = useDispatch();
   const sort = useSelector((state) => state.filter.sort);
+  const sortRef = useRef();
 
   const [isVisible, setVisibility] = useState(false);
 
@@ -19,8 +20,20 @@ function Sort() {
     setVisibility(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.path.includes(sortRef.current)) setVisibility(false);
+    };
+
+    document.body.addEventListener("click", (event) =>
+      handleClickOutside(event)
+    );
+
+    return () => document.body.removeEventListener("click", handleClickOutside);
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label" onClick={() => setVisibility(!isVisible)}>
         <svg
           width="10"

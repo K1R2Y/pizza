@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useContext, useRef } from "react";
 import Categories from "../components/Categories";
 import Sort, { sortBy } from "../components/Sort";
